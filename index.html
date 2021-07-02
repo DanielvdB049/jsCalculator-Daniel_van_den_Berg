@@ -1,0 +1,169 @@
+<html lang="en">
+  <head>
+    <title>jsCalculator</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script>
+      let trailingResult = 0;
+      let operationOptions = ['add', 'subtract', 'multiply', 'divide'];
+      let workingOperation = "";
+
+      function updateDisplay(input)  {
+        let display = document.getElementById("display");
+        let secondaryDisplay = document.getElementById("secondaryDisplay");
+
+        if (display.innerHTML === "0" && operationOptions.indexOf(input) === -1) {
+          if (input === "decimal") {
+            display.innerHTML = "0.";
+          } else if (input === "negative-value") {
+            if (display.innerHTML.indexOf("-1") === -1) {
+              display.innerHTML = "-" + display.innerHTML
+            } else if (display.innerHTML.indexOf("-1" > -1)) {
+              display.innerHTML = display.innerHTML.slice(1, display.innerHTML.length);
+            }
+          } else {
+          display.innerHTML = input;
+        }
+        } else if (operationOptions.indexOf(input) >= 0) {
+          //console.log("Dealing with an operation");
+
+          if (trailingResult === display.innerHTML) {
+              workingOperation = input;
+          } else if (workingOperation ===  "")  {
+            // Dealing withan operand
+            workingOperation = input;
+            trailingResult = display.innerHTML
+            secondaryDisplay.innerHTML = trailingResult;
+            display.innerHTML = 0;
+          } else {
+            //Dealing with a set operand
+            trailingResult = calculate(trailingResult, display.innerHTML, workingOperation);
+            secondaryDisplay.innerHTML = trailingResult;
+            display.innerHTML = 0;
+            workingOperation = input;
+          }
+         } else if (input === "equals") {
+          display.innerHTML = calculate(trailingResult, display.innerHTML, workingOperation);
+          trailingResult = 0;
+          workingOperation = "";
+        } else if (input === "decimal") {
+          if (display.innerHTML.indexOf(".") === -1) {
+            display.innerHTML += ".";
+          }
+        } else if (input === "negative-value") {
+          if (display.innerHTML.indexOf("-1") === -1) {
+            display.innerHTML = "-" + display.innerHTML
+          } else if (display.innerHTML.indexOf("-1" > -1)) {
+            display.innerHTML = display.innerHTML.slice(1, display.innerHTML.length);
+          }
+        } else {
+        display.innerHTML += input;
+        }
+        //console.log(trailingResult, "<= trailingResult", display.innerHTML, "<= display.innerHTML", workingOperation, "<= workingOperation");
+      }
+      function clearDisplay() {
+        let display = document.getElementById("display");
+        let secondaryDisplay = document.getElementById("secondaryDisplay");
+        trailingResult = 0;
+        display.innerHTML = 0;
+        secondaryDisplay.innerHTML = trailingResult;
+      }
+      function resetDisplay() {
+        let display = document.getElementById("display");
+        let secondaryDisplay = document.getElementById("secondaryDisplay");
+        display.innerHTML =  0;
+      }
+
+      function calculate(firstNumber, secondNumber, operation) {
+        let result;
+        firstNumber = parseFloat(firstNumber);
+        secondNumber = parseFloat(secondNumber);
+        switch(operation) {
+          case "add":
+          result = firstNumber + secondNumber;
+          break;
+          case "subtract":
+          result = firstNumber - secondNumber;
+          break;
+          case "multiply":
+          result = firstNumber * secondNumber;
+          break;
+          case "divide":
+          result = firstNumber / secondNumber;
+          break;
+          default:
+        }
+        return result.toString();
+      }
+
+    </script>
+    <style>
+      #display {
+        font-size: 3rem;
+      }
+      #secondaryDisplay {
+        font-size: 3rem;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="container-fluid my-5">
+      <div class="row text-center">
+        <div class="col-9">
+          <div id="display" class="bg-success text-white py-4 my-3">0</div>
+        </div>
+        <div class="col-3">
+          <div id="secondaryDisplay" class="bg-info text-white py-4 my-3">0</div>
+        </div>
+      </div>
+      <div class="row text-center my-2">
+      <div class="col-6">
+      <a id="clear" class="btn btn-block btn-danger text-white" onClick="clearDisplay()">Clear</a>
+      </div>
+      <div class="col-3">
+        <a id="reset" class="btn btn-block btn-warning text-white" onClick="resetDisplay()">Delete</a>
+      </div>
+      <div class="col-3">
+        <a id="negative-value" class="btn btn-block btn-secondary text-white" onClick="updateDisplay('negative-value')">+/-</a>
+      </div>
+      </div>
+      <div class="row text-center">
+        <div class="col-3">
+          <a id="seven" class="btn btn-block btn-primary text-white" onClick="updateDisplay(7)">7</a>
+          <a id="four" class="btn btn-block btn-primary text-white" onClick="updateDisplay(4)">4</a>
+          <a id="one" class="btn btn-block btn-primary text-white" onClick="updateDisplay(1)">1</a>
+          <a id="zero" class="btn btn-block btn-primary text-white" onClick="updateDisplay(0)">0</a>
+        </div>
+          <div class="col-3">
+            <a id="eight" class="btn btn-block btn-primary text-white" onClick="updateDisplay(8)">8</a>
+            <a id="five" class="btn btn-block btn-primary text-white" onClick="updateDisplay(5)">5</a>
+            <a id="two" class="btn btn-block btn-primary text-white" onClick="updateDisplay(2)">2</a>
+            <a id="decimal" class="btn btn-block btn-secondary text-white" onClick="updateDisplay('decimal')">.</a>
+          </div>
+          <div class="col-3">
+            <a id="nine" class="btn btn-block btn-primary text-white" onClick="updateDisplay(9)">9</a>
+            <a id="six" class="btn btn-block btn-primary text-white" onClick="updateDisplay(6)">6</a>
+            <a id="three" class="btn btn-block btn-primary text-white" onClick="updateDisplay(3)">3</a>
+            <a id="equals" class="btn btn-block btn-success text-white" onClick="updateDisplay('equals')">=</a>
+          </div>
+          <div class="col-3">
+            <a id="add" class="btn btn-block btn-secondary text-white" onClick="updateDisplay('add')">+</a>
+            <a id="subtract" class="btn btn-block btn-secondary text-white" onClick="updateDisplay('subtract')">-</a>
+            <a id="multiply" class="btn btn-block btn-secondary text-white" onClick="updateDisplay('multiply')">*</a>
+            <a id="divide" class="btn btn-block btn-secondary text-white" onClick="updateDisplay('divide')">/</a>
+          </div>
+      </div>
+      <div class="row text-center">
+        <div class="col float-right my-5"
+          <h5>Daniel van den Berg Immediate Execution Logic jsCalculator</h5>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  </body>
+</html>
